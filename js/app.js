@@ -19,18 +19,43 @@
     }
 
     function showPicture() {
-        let k = 0;
-        let divId = this.id;
-        let selectedDiv = document.getElementById(divId);
-        let newImg = document.createElement('img');
-        newImg.src = "img/" + shufflePicturesName[divId] + ".png";
-        newImg.setAttribute('alt', 'Image discovered');
-        selectedDiv.innerHTML = "";
-        k += 180;
-        selectedDiv.style.transform = "rotatey(" + k + "deg)";
-        selectedDiv.style.transitionDuration = "0.5s";
-        selectedDiv.appendChild(newImg);
-        countDiscovered();
+        if (countDiscovered() < 2) {
+            let k = 0;
+            let divId = this.id;
+            let selectedDiv = document.getElementById(divId);
+            let newImg = document.createElement('img');
+            newImg.src = "img/" + shufflePicturesName[divId] + ".png";
+            newImg.setAttribute('alt', 'Image discovered');
+            selectedDiv.innerHTML = "";
+            k += 180;
+            selectedDiv.style.transform = "rotatey(" + k + "deg)";
+            selectedDiv.style.transitionDuration = "0.5s";
+            selectedDiv.appendChild(newImg);
+
+            if (countDiscovered() === 2) {
+                console.log(countDiscovered());
+                setTimeout(hidePictures, 1200);
+            }
+        }
+    }
+
+    function hidePictures() {
+        pictures.forEach(image => {
+            let images = image.getElementsByTagName('img');
+            let imgSrc = images.item(0).getAttribute('src');
+
+            if (!imgSrc.endsWith("back.png") && !imgSrc.endsWith("empty.png")) {
+                let newImg = document.createElement('img');
+                newImg.src = "img/back.png";
+                newImg.setAttribute('alt', 'Image hide');
+                image.innerHTML = "";
+                image.appendChild(newImg);
+            }
+        });
+    }
+
+    function removePictures() {
+
     }
 
     function countDiscovered() {
@@ -47,7 +72,6 @@
                 i++;
             }
         }
-        console.log(i)
         return i;
     }
 
