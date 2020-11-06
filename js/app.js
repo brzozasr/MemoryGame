@@ -30,6 +30,25 @@
         selectedDiv.style.transform = "rotatey(" + k + "deg)";
         selectedDiv.style.transitionDuration = "0.5s";
         selectedDiv.appendChild(newImg);
+        countDiscovered();
+    }
+
+    function countDiscovered() {
+        let i = 0;
+        let srcArray = [];
+        pictures.forEach(image => {
+            let images = image.getElementsByTagName('img');
+            let imgSrc = images.item(0).getAttribute('src');
+            srcArray.push(imgSrc);
+        });
+
+        for (let path of srcArray) {
+            if(!path.endsWith("back.png") && !path.endsWith("empty.png")) {
+                i++;
+            }
+        }
+        console.log(i)
+        return i;
     }
 
     function addListener() {
