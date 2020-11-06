@@ -1,0 +1,28 @@
+body {
+    margin: auto;
+}
+
+#content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 99vh;
+}
+
+.pictures {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    width: 404px;
+    height: 542px;
+    padding: 5px;
+    /*margin: 0;*/
+}
+
+.pictures.picture {
+    /*border: 1px solid black;*/
+    width: 128px;
+    height: 128px;
+    padding: 0;
+}
+
