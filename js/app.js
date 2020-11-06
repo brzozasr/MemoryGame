@@ -146,7 +146,7 @@
             localStorage.setItem("bestTimeMemoryGame", htmlTime.textContent);
             htmlBestTime.textContent = htmlTime.textContent;
             setTimeout(function () {
-                alert("You had the best time in the game " + htmlTime.textContent + " min.\nThe new best time will be saved.");
+                alert("You have achieved the best time in the game " + htmlTime.textContent + " min.\nThe new best time will be saved.");
             }, 500);
         }
     }
