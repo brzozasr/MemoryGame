@@ -6,6 +6,10 @@
 
     let picturesDiscovered = [];
 
+    let start = Date.now();
+
+    let intervalStop;
+
     function shuffle(array) {
         // copy of the "array"
         let tmpArray = array.slice(0, array.length);
@@ -37,9 +41,9 @@
 
             if (countDiscovered() === 2 && picturesDiscovered.length === 2) {
                 if (picturesDiscovered[0] === picturesDiscovered[1]) {
-                    setTimeout(removePictures, 1200);
+                    setTimeout(removePictures, 1000);
                 } else {
-                    setTimeout(hidePictures, 1200);
+                    setTimeout(hidePictures, 1000);
                 }
 
                 picturesDiscovered.splice(0, picturesDiscovered.length);
@@ -77,6 +81,11 @@
                 image.removeAttribute('style');
                 image.removeEventListener("click", showPicture)
             }
+
+            if (allDiscovered()) {
+                clearInterval(intervalStop);
+                writeBestTime();
+            }
         });
     }
 
@@ -90,11 +99,87 @@
         });
 
         for (let path of srcArray) {
-            if(!path.endsWith("back.png") && !path.endsWith("empty.png")) {
+            if (!path.endsWith("back.png") && !path.endsWith("empty.png")) {
                 i++;
             }
         }
         return i;
+    }
+
+    function allDiscovered() {
+        let srcArray = [];
+        pictures.forEach(image => {
+            let images = image.getElementsByTagName('img');
+            let imgSrc = images.item(0).getAttribute('src');
+            if (imgSrc.endsWith("empty.png")) {
+                srcArray.push(imgSrc);
+            }
+        });
+
+        return srcArray.length === 12;
+    }
+
+    function startTimer() {
+        let distance = Date.now() - start;
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / (1000));
+        let secAndMilisec = (distance / 1000).toFixed(3).split(".");
+        let milliseconds = secAndMilisec[1];
+
+        document.getElementById("time").innerHTML = pad(minutes) + ":" + pad(seconds) + "." + milliseconds;
+    }
+
+    function pad(val) {
+        let valString = val + "";
+        if (valString.length < 2) {
+            return "0" + valString;
+        } else {
+            return valString;
+        }
+    }
+
+    function writeBestTime() {
+        let htmlTime = document.querySelector('#time');
+        let htmlBestTime = document.querySelector('#best-time');
+
+        if (compareTimes(htmlTime.textContent, htmlBestTime.textContent)) {
+            localStorage.setItem("bestTimeMemoryGame", htmlTime.textContent);
+            htmlBestTime.textContent = htmlTime.textContent;
+            setTimeout(function () {
+                alert("You had the best time in the game " + htmlTime.textContent + " min.\nThe new best time will be saved.");
+            }, 500);
+        }
+    }
+
+    function readBestTime() {
+        let bestTimeScore = localStorage.getItem("bestTimeMemoryGame");
+        let htmlBestTime = document.querySelector('#best-time');
+
+        if (bestTimeScore) {
+            htmlBestTime.textContent = bestTimeScore;
+        }
+    }
+
+    function compareTimes(achievedTime, bestTime) {
+        let achievedArray = achievedTime.split(':');
+        let achievedMin = parseInt(achievedArray[0]);
+        let achievedSec = parseInt(achievedArray[1].split('.')[0]);
+        let achievedMilSec = parseInt(achievedArray[1].split('.')[1]);
+
+        let bestArray = bestTime.split(':');
+        let bestMin = parseInt(bestArray[0]);
+        let bestSec = parseInt(bestArray[1].split('.')[0]);
+        let bestMilSec = parseInt(bestArray[1].split('.')[1]);
+
+        let achievedMinToMilSec = achievedMin * 60000;
+        let achievedSecToMilSec = achievedSec * 1000;
+        let sumAchievedMilSec = achievedMinToMilSec + achievedSecToMilSec + achievedMilSec;
+
+        let bestMinToMilSec = bestMin * 60000;
+        let bestSecToMilSec = bestSec * 1000;
+        let sumBestMilSec = bestMinToMilSec + bestSecToMilSec + bestMilSec;
+
+        return sumAchievedMilSec < sumBestMilSec;
     }
 
     function addListener() {
@@ -105,6 +190,10 @@
 
     function initGame() {
         addListener();
+        intervalStop = setInterval(startTimer, 100);
+        readBestTime();
+
+        // localStorage.clear();
     }
 
     initGame();
